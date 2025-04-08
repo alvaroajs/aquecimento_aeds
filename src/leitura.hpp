@@ -2,5 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 using namespace std;
-void lerarquivo();
+ifstream abrirArquivo();
+vector<vector<int>> lerMatriz(ifstream &input, int columSize, int lineSize);

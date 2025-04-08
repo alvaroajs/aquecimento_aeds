@@ -1,10 +1,10 @@
 
-#include "leitura.hpp"
+#include "simulacao.hpp"
 #include <iostream>
 
 int main(){
-    lerarquivo();
-    std::cout << "Leu o arquivo" << std::endl;
+    simulacao();
+   
 
     return 0;
 }

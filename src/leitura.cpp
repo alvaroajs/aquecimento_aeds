@@ -1,24 +1,23 @@
 #include "leitura.hpp"
 
-void lerarquivo() {
+ifstream abrirArquivo() {
     ifstream input("data/input.dat");
     int lineSize = 0, columSize = 0;
-    if (!input) {
-        cout << "Erro ao abrir o arquivo: " << "../input.dat" << endl;
-        return;
-    }
-    string linha;
-    input >> lineSize >> columSize;
-    cout << "Tamanho da linha: " << lineSize << endl;
-    cout << "Tamanho da coluna: " << columSize << endl;
-    while (getline(input, linha)) {
-        cout << linha << endl;
-    }
-    if (input.is_open()) {
-        input.close();
-    }
-    cout << "Arquivo lido com sucesso!" << endl;
+   
+    return input;
 
+}
 
+vector<vector<int>> lerMatriz(ifstream &input, int lineSize, int columSize) {
+    
+    vector<vector<int>> matriz(lineSize, vector<int>(columSize)); // criando a matriz
+    for (int i = 0; i < lineSize; i++) {
+        for (int j = 0; j < columSize; j++) {
+            input >> matriz[i][j];
+        }
+    }
+    
+    
+    return matriz;
 
 }
