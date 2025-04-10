@@ -7,4 +7,6 @@
 #include "config.hpp"
 
 void simulacao();
-void interation (int **matriz, int lineSize, int columSize, int fireStart_X, int fireSart_Y);
+void interation(vector<vector<int>>& matriz, int lineSize, int columSize, int fireStart_X, int fireStart_Y);
+void showMatrix(vector<vector<int>>& matriz, int lineSize, int columSize);
+bool posicaoValida(int x, int y, int linhas, int colunas);

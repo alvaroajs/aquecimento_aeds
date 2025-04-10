@@ -1,8 +1,7 @@
-const int  K_MAX  = 100;
+#pragma once
 
-enum windAndInteretion{
-    North,
-    West,
-    South,
-    East,
-};
+const int  K_MAX  = 5;
+const bool northWind = true;
+const bool eastWind = true;
+const bool southWind = true;
+const bool westWind = true;
