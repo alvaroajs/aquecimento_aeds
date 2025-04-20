@@ -5,10 +5,20 @@ void simulacao(){
     int lineSize = 0, columSize = 0, fireStart_X = 0, fireStart_Y = 0;
     string linha;
     ifstream input =  abrirArquivo(); //funcao abrirArquivo() retorna um um ponteiro do tipo ifstream
+    ifstream output = abrirSaida();
+    bool stop;
+
     vector<tuple<int, int, int>> propag;
+
+    tuple<int, int, int> animal; //posx, posy, passos
+    pair<int, int> animalPosAnt;
 
     if (!input) { // verifica se o arquivo foi aberto corretamente
         cout << "Erro ao abrir o arquivo: " << "../input.dat" << endl;
+        return;
+    }
+    if (!output) { // verifica se o arquivo foi aberto corretamente
+        cout << "Erro ao abrir o arquivo: " << "../output.dat" << endl;
         return;
     }
     input >> lineSize >> columSize; //leitura do tamanho da matriz
@@ -16,15 +26,17 @@ void simulacao(){
     getline(input, linha); // descarta o restante da linha
     
     vector<vector<int>> inicialMatrix = lerMatriz(input, lineSize, columSize); //leitura da matriz
-    cout << K_MAX << endl; 
+    animal = setPosAnimal(inicialMatrix,lineSize, columSize); 
     
-    
-    showMatrix(inicialMatrix, lineSize, columSize);
     for(int k = 0; k < K_MAX; k++){
         cout << "\nInteracao: " << k + 1 << endl;
-        if (!interation(inicialMatrix, lineSize, columSize, fireStart_X, fireStart_Y, propag, k)){
+        stop = interation(inicialMatrix, lineSize, columSize, fireStart_X, fireStart_Y, propag, k); 
+
+        showMatrix(inicialMatrix, lineSize, columSize, k);
+        if(!stop){
             break;
         }
+
     }
     input.close();
 }
@@ -83,31 +95,52 @@ bool interation(vector<vector<int>>& matriz, int linhas, int colunas, int fireSt
     matriz = novaMatriz;
 
     cout << "\nMatriz atualizada:\n" << endl;
-    showMatrix(matriz, linhas, colunas);
+    
     return (propagNorth || propagSouth || propagEast || propagWest); // retorna true se houver propagação
 }
 
-void showMatrix(vector<vector<int>>& matriz, int lineSize, int columSize){
+tuple<int, int, int> setPosAnimal(vector<vector<int>>& inicialMatrix, int lineSize, int columSize){
+    int x = 0, y = 0;
+
+    for (int i = (lineSize - 1); i >= 0; i--){
+        for(int j = columSize - 1; j >= 0; i--){
+            if(inicialMatrix[i][j]  != 2){
+                return make_tuple(i, j, 0);
+            }
+        }
+    }
+}
+
+
+void moverAnimal(vector<tuple<int, int, int>> animal, vector<pair<int, int>> animalPosAnt){
+
+
+
+
+}
+
+
+
+
+void showMatrix(vector<vector<int>>& matriz, int lineSize, int columSize, int k){
+    escreverNoOutput("\nInteracao: " + to_string(k + 1) + "\n");
     for(int i = 0; i < lineSize; i++){
         for(int j = 0; j < columSize; j++){
             cout << matriz[i][j] << " ";
+            escreverNoOutput(to_string(matriz[i][j])); // escreve no arquivo de saída
+            escreverNoOutput(" ");
         }
+        escreverNoOutput("\n");
         cout << endl;
     }
+    escreverNoOutput("\n");
 
 }
 bool posicaoValida(int x, int y, int linhas, int colunas) {
     
-    if (x > 0 && x < linhas - 1 ) { // verifica se pode ir mais para o norte ou sul
-        
-        return true; 
-        
-    }
-    else if(y > 0 && y < colunas - 1){
-        return true; 
-    }
+    return (x > 0 && x < linhas - 1 ) || (y > 0 && y < colunas - 1); // verifica se pode ir mais para o norte ou sul
 
-    return false; 
+    
 }
 
 
