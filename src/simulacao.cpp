@@ -10,7 +10,7 @@ void simulacao(){
 
     vector<tuple<int, int, int>> propag;
 
-    tuple<int, int, int> animal; //posx, posy, passos
+    tuple<int, int, int, int> animal; //posx, posy, passos, quantas vezes ta parado na mesma posição
     pair<int, int> animalPosAnt;
 
     if (!input) { // verifica se o arquivo foi aberto corretamente
@@ -31,9 +31,22 @@ void simulacao(){
     for(int k = 0; k < K_MAX; k++){
         cout << "\nInteracao: " << k + 1 << endl;
         stop = interation(inicialMatrix, lineSize, columSize, fireStart_X, fireStart_Y, propag, k); 
-
+        moverAnimal(animal, animalPosAnt, inicialMatrix, lineSize, columSize);
         showMatrix(inicialMatrix, lineSize, columSize, k);
         if(!stop){
+            cout << "Animal parou na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << "passos" << endl;
+            {
+                if(get<3>(animal) != -1){
+                    std::ostringstream oss;
+                    oss << "Animal parou na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";
+                    escreverNoOutput(oss.str());
+                }
+                else{
+                    std::ostringstream oss;
+                    oss << "Animal morreu na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";
+                    escreverNoOutput(oss.str());
+                }
+            }
             break;
         }
 
@@ -99,28 +112,212 @@ bool interation(vector<vector<int>>& matriz, int linhas, int colunas, int fireSt
     return (propagNorth || propagSouth || propagEast || propagWest); // retorna true se houver propagação
 }
 
-tuple<int, int, int> setPosAnimal(vector<vector<int>>& inicialMatrix, int lineSize, int columSize){
+tuple<int, int, int, int> setPosAnimal(vector<vector<int>>& inicialMatrix, int lineSize, int columSize){
     int x = 0, y = 0;
 
     for (int i = (lineSize - 1); i >= 0; i--){
-        for(int j = columSize - 1; j >= 0; i--){
+        for(int j = columSize - 1; j >= 0; j--){
             if(inicialMatrix[i][j]  != 2){
-                return make_tuple(i, j, 0);
+                return make_tuple(i, j, 0, 0);
             }
         }
     }
+    return make_tuple(0, 0, 0, 0);
 }
 
 
-void moverAnimal(vector<tuple<int, int, int>> animal, vector<pair<int, int>> animalPosAnt){
+void moverAnimal(tuple<int, int, int, int>& animal, pair<int, int>& animalPosAnt, vector<vector<int>>& matriz, int lineSize, int columSize) {
+    int x = get<0>(animal);
+    int y = get<1>(animal);
+    int passos = get<2>(animal);
+    int parado = get<3>(animal);
+    animalPosAnt = make_pair(x, y);
 
+    // Verifica se a posição atual do animal foi atingida pelo fogo (valor 2)
+    if (matriz[x][y] == 2) {
+        // Segunda chance - tenta mover o animal para uma posição segura
+        
+        // Primeira prioridade: Água (valor 4)
+        if(posicaoValida(x + 1, y, lineSize, columSize) && matriz[x + 1][y] == 4){        
+            apagarFogo(x + 1, y, matriz, lineSize, columSize);
+            animal = make_tuple(x + 1, y, passos + 1, 0);
+            matriz[x + 1][y] = 0; 
+            return;
+        }
+        else if(posicaoValida(x - 1, y, lineSize, columSize) && matriz[x - 1][y] == 4){
+            apagarFogo(x - 1, y, matriz, lineSize, columSize);
+            animal = make_tuple(x - 1, y, passos + 1, 0);
+            matriz[x - 1][y] = 0;
+            return;
+        }
+        else if(posicaoValida(x, y + 1, lineSize, columSize) && matriz[x][y + 1] == 4){
+            apagarFogo(x, y + 1, matriz, lineSize, columSize);
+            animal = make_tuple(x, y + 1, passos + 1, 0);
+            matriz[x][y + 1] = 0;
+            return;
+        }
+        else if(posicaoValida(x, y - 1, lineSize, columSize) && matriz[x][y - 1] == 4){
+            apagarFogo(x, y - 1, matriz, lineSize, columSize);
+            animal = make_tuple(x, y - 1, passos + 1, 0);
+            matriz[x][y - 1] = 0;
+            return;
+        }
+        
+        // Segunda prioridade: Árvore saudável (valor 1)
+        if(posicaoValida(x + 1, y, lineSize, columSize) && matriz[x + 1][y] == 1){
+            animal = make_tuple(x + 1, y, passos + 1, 0);
+            return;
+        }
+        else if(posicaoValida(x - 1, y, lineSize, columSize) && matriz[x - 1][y] == 1){
+            animal = make_tuple(x - 1, y, passos + 1, 0);
+            return;
+        }
+        else if(posicaoValida(x, y + 1, lineSize, columSize) && matriz[x][y + 1] == 1){
+            animal = make_tuple(x, y + 1, passos + 1, 0);
+            return;
+        }
+        else if(posicaoValida(x, y - 1, lineSize, columSize) && matriz[x][y - 1] == 1){
+            animal = make_tuple(x, y - 1, passos + 1, 0);
+            return;
+        }
+        
+        // Terceira prioridade: Área vazia (valor 0)
+        if(posicaoValida(x + 1, y, lineSize, columSize) && matriz[x + 1][y] == 0){
+            animal = make_tuple(x + 1, y, passos + 1, 0);
+            return;
+        }
+        else if(posicaoValida(x - 1, y, lineSize, columSize) && matriz[x - 1][y] == 0){
+            animal = make_tuple(x - 1, y, passos + 1, 0);
+            return;
+        }
+        else if(posicaoValida(x, y + 1, lineSize, columSize) && matriz[x][y + 1] == 0){
+            animal = make_tuple(x, y + 1, passos + 1, 0);
+            return;
+        }
+        else if(posicaoValida(x, y - 1, lineSize, columSize) && matriz[x][y - 1] == 0){
+            animal = make_tuple(x, y - 1, passos + 1, 0);
+            return;
+        }
+        
+        // Quarta prioridade: Árvore queimada (valor 3)
+        if(posicaoValida(x + 1, y, lineSize, columSize) && matriz[x + 1][y] == 3){
+            animal = make_tuple(x + 1, y, passos + 1, 0);
+            return;
+        }
+        else if(posicaoValida(x - 1, y, lineSize, columSize) && matriz[x - 1][y] == 3){
+            animal = make_tuple(x - 1, y, passos + 1, 0);
+            return;
+        }
+        else if(posicaoValida(x, y + 1, lineSize, columSize) && matriz[x][y + 1] == 3){
+            animal = make_tuple(x, y + 1, passos + 1, 0);
+            return;
+        }
+        else if(posicaoValida(x, y - 1, lineSize, columSize) && matriz[x][y - 1] == 3){
+            animal = make_tuple(x, y - 1, passos + 1, 0);
+            return;
+        }
+        
+        // Se não houver opção segura, o animal morre
+        animal = make_tuple(x, y, passos, -1); // -1 indica que o animal morreu
+        return;
+    }
+    
+    // Movimento normal (quando a posição não está em chamas)
+    
+    // Primeira prioridade: Água (valor 4)
+    if(posicaoValida(x + 1, y, lineSize, columSize) && matriz[x + 1][y] == 4){        
+        apagarFogo(x + 1, y, matriz, lineSize, columSize);
+        animal = make_tuple(x + 1, y, passos + 1, 0);
+        matriz[x + 1][y] = 0; 
+        return;
+    }
+    else if(posicaoValida(x - 1, y, lineSize, columSize) && matriz[x - 1][y] == 4){
+        apagarFogo(x - 1, y, matriz, lineSize, columSize);
+        animal = make_tuple(x - 1, y, passos + 1, 0);
+        matriz[x - 1][y] = 0;
+        return;
+    }
+    else if(posicaoValida(x, y + 1, lineSize, columSize) && matriz[x][y + 1] == 4){
+        apagarFogo(x, y + 1, matriz, lineSize, columSize);
+        animal = make_tuple(x, y + 1, passos + 1, 0);
+        matriz[x][y + 1] = 0;
+        return;
+    }
+    else if(posicaoValida(x, y - 1, lineSize, columSize) && matriz[x][y - 1] == 4){
+        apagarFogo(x, y - 1, matriz, lineSize, columSize);
+        animal = make_tuple(x, y - 1, passos + 1, 0);
+        matriz[x][y - 1] = 0;
+        return;
+    }
+    
+    // Segunda prioridade: Árvore saudável (valor 1)
+    if(posicaoValida(x + 1, y, lineSize, columSize) && matriz[x + 1][y] == 1){
+        animal = make_tuple(x + 1, y, passos + 1, 0);
+        return;
+    }
+    else if(posicaoValida(x - 1, y, lineSize, columSize) && matriz[x - 1][y] == 1){
+        animal = make_tuple(x - 1, y, passos + 1, 0);
+        return;
+    }
+    else if(posicaoValida(x, y + 1, lineSize, columSize) && matriz[x][y + 1] == 1){
+        animal = make_tuple(x, y + 1, passos + 1, 0);
+        return;
+    }
+    else if(posicaoValida(x, y - 1, lineSize, columSize) && matriz[x][y - 1] == 1){
+        animal = make_tuple(x, y - 1, passos + 1, 0);
+        return;
+    }
+    
+    // Terceira prioridade: Área vazia (valor 0)
+    if(posicaoValida(x + 1, y, lineSize, columSize) && matriz[x + 1][y] == 0){
+        animal = make_tuple(x + 1, y, passos + 1, 0);
+        return;
+    }
+    else if(posicaoValida(x - 1, y, lineSize, columSize) && matriz[x - 1][y] == 0){
+        animal = make_tuple(x - 1, y, passos + 1, 0);
+        return;
+    }
+    else if(posicaoValida(x, y + 1, lineSize, columSize) && matriz[x][y + 1] == 0){
+        animal = make_tuple(x, y + 1, passos + 1, 0);
+        return;
+    }
+    else if(posicaoValida(x, y - 1, lineSize, columSize) && matriz[x][y - 1] == 0){
+        animal = make_tuple(x, y - 1, passos + 1, 0);
+        return;
+    }
+    
+    // Quarta prioridade: Árvore queimada (valor 3)
+    if(posicaoValida(x + 1, y, lineSize, columSize) && matriz[x + 1][y] == 3){
+        animal = make_tuple(x + 1, y, passos + 1, 0);
+        return;
+    }
+    else if(posicaoValida(x - 1, y, lineSize, columSize) && matriz[x - 1][y] == 3){
+        animal = make_tuple(x - 1, y, passos + 1, 0);
+        return;
+    }
+    else if(posicaoValida(x, y + 1, lineSize, columSize) && matriz[x][y + 1] == 3){
+        animal = make_tuple(x, y + 1, passos + 1, 0);
+        return;
+    }
+    else if(posicaoValida(x, y - 1, lineSize, columSize) && matriz[x][y - 1] == 3){
+        animal = make_tuple(x, y - 1, passos + 1, 0);
+        return;
+    }
 
-
-
+    // Se o animal está em uma área vazia (valor 0), ele pode permanecer nela por até 3 iterações
+    if(matriz[x][y] == 0 && parado <= 2){
+        animal = make_tuple(x, y, passos, parado + 1);
+        return;
+    }
+    // Se o animal já está parado há 3 iterações, ele deve se mover
+    else if(matriz[x][y] == 0 && parado > 2){
+        // O animal não conseguiu se mover após 3 iterações
+        animal = make_tuple(x, y, passos, -1);
+        return;
+    }
+    // Para qualquer outro caso, o animal permanece onde está
+    animal = make_tuple(x, y, passos, parado);
 }
-
-
-
 
 void showMatrix(vector<vector<int>>& matriz, int lineSize, int columSize, int k){
     escreverNoOutput("\nInteracao: " + to_string(k + 1) + "\n");
@@ -138,10 +335,22 @@ void showMatrix(vector<vector<int>>& matriz, int lineSize, int columSize, int k)
 }
 bool posicaoValida(int x, int y, int linhas, int colunas) {
     
-    return (x > 0 && x < linhas - 1 ) || (y > 0 && y < colunas - 1); // verifica se pode ir mais para o norte ou sul
-
+    return (x >= 0 && x < linhas && y >= 0 && y < colunas);
     
 }
 
+void apagarFogo(int x, int y, vector<vector<int>>& matriz, int lineSize, int columSize){
 
-
+    if(posicaoValida(x + 1, y, lineSize, columSize) && matriz[x + 1][y] == 3){
+        matriz[x + 1][y] = 1; // Apaga o fogo
+    }
+    if(posicaoValida(x - 1, y, lineSize, columSize) && matriz[x - 1][y] == 3){
+        matriz[x - 1][y] = 1; // Apaga o fogo
+    }
+    if(posicaoValida(x, y + 1, lineSize, columSize) && matriz[x][y + 1] == 3){
+        matriz[x][y + 1] = 1; // Apaga o fogo
+    }
+    if(posicaoValida(x, y - 1, lineSize, columSize) && matriz[x][y - 1] == 3){
+        matriz[x][y - 1] = 1; // Apaga o fogo
+    }
+}
