@@ -1,3 +1,3 @@
 <p align="center">
-  <img src="img/incencioFlorestal.gif" width="200"/>
+  <img src="img/incencioFlorestal.gif" width="350"/>
 </p>
