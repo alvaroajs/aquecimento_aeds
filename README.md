@@ -49,23 +49,118 @@ O projeto foi compilado utilizando a ferramenta abaixo:
 [![Compilador](https://img.shields.io/badge/Ferramenta-Make-orange)](https://www.gnu.org/software/make/)
 
 ## 📁 Estrutura de Diretórios
+## 📁 Estrutura de Diretórios
 
 ```text
 📦 aquecimento_aeds
 ├── 📂 build                 # Arquivos temporários da compilação
-├── 📂 data                  # Arquivos de entrada e saida
-    ├── imput.dat       
-│   └── output.dat.cpp  
-├── 📂 img                   # GIFs e imagens do readme
+├── 📂 data                  # Arquivos de entrada e saída
+│   ├── input.dat           
+│   └── output.dat.cpp      
+├── 📂 img                   # GIFs e imagens do README
 ├── 📂 src                   # Código-fonte (.cpp e .h)
 │   ├── main.cpp             # Arquivo principal
-|   └──simuacao.hpp
-│   └── simulacao.cpp        # Lógica da simulação
-|   └── config.hpp
-|   └── leitura_escrita.hpp
-|   └── leitura_escrita.cpp  # Leitura e escrita
+│   ├── simulacao.cpp        # Lógica da simulação
+│   ├── simulacao.hpp        
+│   ├── config.hpp           
+│   ├── leitura_escrita.cpp  # Leitura e escrita
+│   └── leitura_escrita.hpp  
 ├── 📄 Makefile              # Script de compilação
 ├── 📄 README.md             # Documentação do projeto
+```
 
+## Direções do Vento e numero de interações
+
+A propagação do fogo é diretamente afetada pela configuração do vento no arquivo `config.hpp`. Cada direção corresponde a um movimento ortogonal específico na matriz, simulando como o vento "empurra" as chamas. Abaixo está a explicação detalhada de cada parâmetro:  
+
+### 1. **`northWind` (Vento Norte)**  
+- **Efeito**: Permite que o fogo se propague para **cima** (direção norte).  
+- **Comportamento na Matriz**:  
+  - Se uma célula em chamas `(i, j)` tem `northWind = true`, ela irá incendiar a célula acima: `(i-1, j)`.  
+  - Exemplo:  
+    ```cpp
+    const bool northWind = true;  // Fogo se espalha para cima
+    ```  
+- **Cenário Típico**: Simula um vento soprando **do sul para o norte**, acelerando a propagação em direção ao topo da matriz.  
+
+---
+
+### 2. **`eastWind` (Vento Leste)**  
+- **Efeito**: Permite que o fogo se propague para a **direita** (direção leste).  
+- **Comportamento na Matriz**:  
+  - Se uma célula em chamas `(i, j)` tem `eastWind = true`, ela irá incendiar a célula à direita: `(i, j+1)`.  
+  - Exemplo:  
+    ```cpp
+    const bool eastWind = true;   // Fogo se espalha para direita
+    ```  
+- **Cenário Típico**: Simula um vento soprando **do oeste para o leste**, comum em regiões costeiras.  
+
+---
+
+### 3. **`southWind` (Vento Sul)**  
+- **Efeito**: Permite que o fogo se propague para **baixo** (direção sul).  
+- **Comportamento na Matriz**:  
+  - Se uma célula em chamas `(i, j)` tem `southWind = true`, ela irá incendiar a célula abaixo: `(i+1, j)`.  
+  - Exemplo:  
+    ```cpp
+    const bool southWind = true;  // Fogo se espalha para baixo
+    ```  
+- **Cenário Típico**: Simula um vento soprando **do norte para o sul**, comum em áreas montanhosas.  
+
+---
+
+### 4. **`westWind` (Vento Oeste)**  
+- **Efeito**: Permite que o fogo se propague para a **esquerda** (direção oeste).  
+- **Comportamento na Matriz**:  
+  - Se uma célula em chamas `(i, j)` tem `westWind = true`, ela irá incendiar a célula à esquerda: `(i, j-1)`.  
+  - Exemplo:  
+    ```cpp
+    const bool westWind = true;   // Fogo se espalha para esquerda
+    ```  
+- **Cenário Típico**: Simula um vento soprando **do leste para o oeste**, típico em zonas de alta pressão.  
+
+---
+
+### Combinações de Vento  
+- **Vento Omnidirecional** (padrão):  
+  ```cpp
+  const bool northWind = true;
+  const bool eastWind = true;
+  const bool southWind = true;
+  const bool westWind = true;
+  ```
+
+### Controle de Iterações: A Constante `K_MAX`  
+
+Assim como a configuração do vento, a constante **`K_MAX`**, definida no arquivo `config.hpp`, determina o **número máximo de iterações** que a simulação pode executar. Esse parâmetro é essencial para garantir que a simulação não entre em loop infinito e para comparar desempenho em diferentes cenários.  
+
+### Funcionalidade da `K_MAX`  
+- **Limite de Ciclos**:  
+  - A simulação é interrompida automaticamente após `K_MAX` iterações, mesmo que ainda haja células em chamas.  
+  - Exemplo: Se `K_MAX = 25`, o programa executará no máximo 25 ciclos de propagação e movimentação do animal.  
+
+- **Uso no Código**:  
+  - O loop principal da simulação (`simulacao.cpp`) utiliza `K_MAX` como condição de parada:  
+    ```cpp
+    for(int k = 0; k < K_MAX; k++) {
+        // Executa propagação e movimentação
+    }
+    ```  
+
+### Por Que Ajustar `K_MAX`?  
+1. **Cenários de Curto Prazo**:  
+   - Valores menores (ex: `K_MAX = 10`) são úteis para simular incêndios rápidos ou testar comportamentos iniciais do animal.  
+
+2. **Cenários de Longo Prazo**:  
+   - Valores maiores (ex: `K_MAX = 100`) permitem analisar padrões de propagação em florestas extensas ou avaliar a eficiência do algoritmo em matrizes grandes.  
+
+3. **Prevenção de Loops Infinitos**:  
+   - Garante que a simulação termine mesmo se o fogo não se extinguir naturalmente (ex: em uma floresta totalmente conectada por árvores saudáveis).  
+
+### Como Modificar `K_MAX`  
+Edite o arquivo `config.hpp` e altere o valor da constante:  
+```cpp
+const int K_MAX = 50;  // Altere para o número desejado
+```
 
 
