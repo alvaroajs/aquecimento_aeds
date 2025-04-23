@@ -19,13 +19,13 @@ A floresta é modelada como uma **matriz dinâmica** de dimensões `N × M`, ond
 
 ## Objetivos e Desafios  
 
-- **Propagação Dinâmica do Fogo**  
+- **Propagação do Fogo**  
   - Implementar dois modos de propagação:  
     - **Sem vento**: Expansão linear para todas as direções ortogonais.  
     - **Com vento**: Direcionamento preferencial (configurável via `config.hpp`).  
   - Garantir que árvores em chamas (`2`) se tornem queimadas (`3`) após um ciclo.  
 
-- **Inteligência do Animal**  
+- **Movimentação do Animal**  
   - Priorizar movimentos para células seguras (`0`), água (`4`), ou evitar fogo (`2`).  
   - Oferecer "segunda chance" de movimento se o animal for atingido pelo fogo.  
   - Registrar trajetória, passos e eventos críticos (ex: morte do animal).  
