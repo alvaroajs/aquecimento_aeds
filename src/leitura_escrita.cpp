@@ -1,9 +1,7 @@
 #include "leitura_escrita.hpp"
 
 ifstream abrirArquivo() {
-    ifstream input("data/input.dat");
-    int lineSize = 0, columSize = 0;
-   
+    ifstream input("data/input.dat");   
     return input;
 
 }
@@ -28,11 +26,8 @@ vector<vector<int>> lerMatriz(ifstream &input, int lineSize, int columSize) {
         for (int j = 0; j < columSize; j++) {
             input >> matriz[i][j];
         }
-    }
-    
-    
+    }    
     return matriz;
-
 }
 
 void escreverNoOutput(string mensagem) {
