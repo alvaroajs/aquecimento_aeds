@@ -41,3 +41,31 @@ O código foi desenvolvido utilizando as seguintes ferramentas:
 [![Linguagem](https://img.shields.io/badge/Linguagem-C++-blue)](https://www.w3schools.com/cpp/)
 [![IDE](https://img.shields.io/badge/IDE-Visual%20Studio%20Code-blueviolet)](https://code.visualstudio.com/docs/?dv=linux64_deb)
 [![Sistema Operacional](https://img.shields.io/badge/ISO-Ubuntu%20Linux%2024.04%20LTS-red)](https://ubuntu.com/)
+
+## ⚙️ Ambiente de Compilação
+
+O projeto foi compilado utilizando a ferramenta abaixo:
+
+[![Compilador](https://img.shields.io/badge/Ferramenta-Make-orange)](https://www.gnu.org/software/make/)
+
+## 📁 Estrutura de Diretórios
+
+```text
+📦 aquecimento_aeds
+├── 📂 build                 # Arquivos temporários da compilação
+├── 📂 data                  # Arquivos de entrada e saida
+    ├── imput.dat       
+│   └── output.dat.cpp  
+├── 📂 img                   # GIFs e imagens do readme
+├── 📂 src                   # Código-fonte (.cpp e .h)
+│   ├── main.cpp             # Arquivo principal
+|   └──simuacao.hpp
+│   └── simulacao.cpp        # Lógica da simulação
+|   └── config.hpp
+|   └── leitura_escrita.hpp
+|   └── leitura_escrita.cpp  # Leitura e escrita
+├── 📄 Makefile              # Script de compilação
+├── 📄 README.md             # Documentação do projeto
+
+
+
