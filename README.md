@@ -154,13 +154,260 @@ Assim como a configuração do vento, a constante **`K_MAX`**, definida no arqui
 2. **Cenários de Longo Prazo**:  
    - Valores maiores (ex: `K_MAX = 100`) permitem analisar padrões de propagação em florestas extensas ou avaliar a eficiência do algoritmo em matrizes grandes.  
 
-3. **Prevenção de Loops Infinitos**:  
-   - Garante que a simulação termine mesmo se o fogo não se extinguir naturalmente (ex: em uma floresta totalmente conectada por árvores saudáveis).  
 
 ### Como Modificar `K_MAX`  
 Edite o arquivo `config.hpp` e altere o valor da constante:  
 ```cpp
 const int K_MAX = 50;  // Altere para o número desejado
 ```
+
+## Principais Funções do Código  
+
+Para organizar a explicação das funções, comece pela **função principal** que coordena a simulação e depois detalhe as subfunções. Segue uma sugestão de estrutura:
+
+---
+
+### **`simulacao()`** (`simulacao.cpp`)  
+**Propósito**: Função principal que gerencia o fluxo completo da simulação.  
+**Funcionalidades**:  
+- Lê o arquivo `input.dat` para obter a matriz inicial e parâmetros.  
+- Inicializa a posição do animal (via `setPosAnimal()`).  
+- Executa o loop principal por `K_MAX` iterações.  
+- Chama `interation()` para propagar o fogo e `moverAnimal()` para atualizar a posição do animal.  
+- Exibe a matriz atualizada a cada iteração (via `showMatrix()`).  
+- Grava resultados no `output.dat`.  
+
+**Codigo**:  
+```cpp
+void simulacao(){
+    int lineSize = 0, columSize = 0, fireStart_X = 0, fireStart_Y = 0;
+    string linha;
+    ifstream input =  abrirArquivo(); //funcao abrirArquivo() retorna um um ponteiro do tipo ifstream
+    ifstream output = abrirSaida();
+    bool stop;
+
+    vector<tuple<int, int, int>> propag;
+
+    tuple<int, int, int, int> animal; //posx, posy, passos, quantas vezes ta parado na mesma posição
+
+    if (!input) { // verifica se o arquivo foi aberto corretamente
+        cout << "Erro ao abrir o arquivo: " << "../input.dat" << endl;
+        return;
+    }
+    if (!output) { // verifica se o arquivo foi aberto corretamente
+        cout << "Erro ao abrir o arquivo: " << "../output.dat" << endl;
+        return;
+    }
+    input >> lineSize >> columSize; //leitura do tamanho da matriz
+    input >> fireStart_X >> fireStart_Y; //leitura da posicao do animal
+    getline(input, linha); // descarta o restante da linha
+    
+    vector<vector<int>> inicialMatrix = lerMatriz(input, lineSize, columSize); //leitura da matriz
+    animal = setPosAnimal(inicialMatrix,lineSize, columSize); 
+    
+    for(int k = 0; k < K_MAX; k++){
+        cout << "\nInteracao: " << k + 1 << endl;
+        stop = interation(inicialMatrix, lineSize, columSize, fireStart_X, fireStart_Y, propag, k); 
+        moverAnimal(animal, inicialMatrix, lineSize, columSize);
+        showMatrix(inicialMatrix, lineSize, columSize, k);
+        if(!stop){
+            {
+                if(get<3>(animal) != -1){
+                    ostringstream oss;
+                    oss << "Animal parou na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";
+                    escreverNoOutput(oss.str());
+                }
+                else{
+                    ostringstream oss;
+                    oss << "Animal morreu na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";
+                    escreverNoOutput(oss.str());
+                }
+            }
+            break;
+        }
+
+    }
+    input.close();
+    output.close();
+
+    return;
+}
+```
+---
+### Módulo de Leitura/Escrita (`leitura_escrita.cpp` e `leitura_escrita.hpp`)
+
+### Funções Principais:
+
+
+#### **`abrirArquivo()`**  
+**Propósito**: Abre o arquivo de entrada `input.dat` para leitura.  
+**Funcionalidades**:  
+- Define o caminho do arquivo como `data/input.dat`.  
+- Retorna um objeto `ifstream` para operações de leitura.  
+- **Validação**: Se o arquivo não existir ou não puder ser aberto, o erro é tratado posteriormente em `simulacao()`.
+- Define o caminho do arquivo de saída `output.dat`.
+- Escreve no arquivo de saída.
+
+**Código**:  
+```cpp
+#include "leitura_escrita.hpp"
+
+ifstream abrirArquivo() {
+    ifstream input("data/input.dat");   
+    return input;
+
+}
+ifstream abrirSaida() {
+    const string caminho = "data/output.dat";
+
+    
+    ofstream limpaArquivo(caminho); 
+    limpaArquivo.close();
+
+    ifstream output(caminho);
+    return output;
+}
+
+vector<vector<int>> lerMatriz(ifstream &input, int lineSize, int columSize) {
+    
+    vector<vector<int>> matriz(lineSize, vector<int>(columSize)); 
+    for (int i = 0; i < lineSize; i++) {
+        for (int j = 0; j < columSize; j++) {
+            input >> matriz[i][j];
+        }
+    }    
+    return matriz;
+}
+
+void escreverNoOutput(string mensagem) {
+    ofstream output("data/output.dat", ios::app);
+    if (output.is_open()) {
+        output << mensagem;
+        output.close();
+    } else {
+        cout << "Erro ao abrir o arquivo de saída." << endl;
+    }
+}
+```
+---
+# 🧪 Casos de Teste
+
+Temos aqui um exemplo de uma matriz 5x5, a primeira linha é referente aos dados da matriz, sendo os dois primeiros números as dimensões linhas e colunas, respectivamente, já os dois últimos numéros as cordenadas do ínicio do íncendio, para esse teste temos o fogo se propagando para todas as direções ortogonais
+
+### Arquivo de Entrada (`input.dat`)  
+```plaintext
+5 5 1 1       // [N=5] [M=5] [Fogo inicia em (X=1, Y=1)]
+1 1 1 1 4     // Linha 0: [1][1][1][1][4]
+1 2 1 1 1     // Linha 1: [1][🔥][1][1][1]
+1 1 1 1 4     // Linha 2: [1][1][1][1][4]
+0 0 1 1 1     // Linha 3: [🟢][🟢][1][1][1]
+1 4 1 0 4     // Linha 4: [1][💧][1][🟢][💧]
+
+``` 
+
+# 🔥 Análise Detalhada por Iteração  
+
+## **Iteração 1**  
+### **Estado da Matriz**:  
+``` plaintext
+1 2 1 1 4
+2 2 2 1 1
+1 2 1 1 4
+0 0 1 1 1
+1 4 1 0 0
+```
+- **Propagação do Fogo**:  
+  - Fogo iniciou em `(1,1)` e se propagou para as 4 direções: `(0,1)`, `(2,1)`, `(1,0)`, `(1,2)`.  
+  - Célula `(1,1)` virou queimada (`3` → não aparece devido a erro no log).  
+
+- **Movimento do Animal**:  
+  - Encontrou água em `(4,3)` (linha 4, coluna 3), apagando fogo adjacente.  
+  - Nova posição: `(4,4)` (passos: 1).  
+
+
+## **Iteração 2**  
+### **Estado da Matriz**:  
+``` plaintext
+2 2 2 1 4
+2 2 2 2 1
+2 2 2 1 4
+0 0 1 1 1
+1 4 1 0 0
+```
+- **Propagação do Fogo**:  
+  - Novos focos em `(0,1)`, `(1,0)`, `(1,2)`, `(2,1)` queimam vizinhos.  
+  - Exemplo: `(1,2)` incendeia `(1,3)`.  
+
+- **Movimento do Animal**:  
+  - Moveu-se para `(3,4)` (passos: 2).  
+
+
+
+## **Iteração 3**  
+### **Estado da Matriz**: 
+``` plaintext
+2 2 2 2 4
+2 2 2 2 1
+2 2 2 1 0
+0 0 2 1 1
+1 4 1 0 0
+```
+ **Evento Crítico**:  
+  - Animal encontrou água em `(3,4)` (linha 3, coluna 4), convertendo-a para `0` e apagando adjacentes.  
+
+- **Movimento do Animal**:  
+  - Nova posição: `(2,4)` (passos: 3).  
+
+## **Iteração 4**  
+### **Estado da Matriz**:  
+```plaintext
+2 2 2 2 4
+2 2 2 2 2
+2 2 2 2 0
+0 0 2 2 1
+1 4 2 0 0
+```
+
+- **Propagação do Fogo**:  
+  - Fogo atinge células inferiores (ex: `(4,2)`).  
+
+- **Movimento do Animal**:  
+  - Retorna para `(3,4)` (passos: 4), possivelmente devido a bloqueio por fogo.  
+
+## **Iteração 5**  
+### **Estado da Matriz**: 
+```plaintext
+2 2 2 2 4
+2 2 2 2 2
+2 2 2 2 0
+0 0 2 2 2
+1 4 2 0 0
+```
+- **Propagação do Fogo**:  
+  - Fogo domina a região central. Células `(3,2)`, `(3,3)` e `(4,2)` queimam.  
+
+- **Movimento do Animal**:  
+  - Move-se para `(4,4)` (passos: 5), área segura (`0`).  
+
+## **Iteração 6**  
+### **Estado da Matriz**:  
+```plaintext
+2 2 2 2 4
+2 2 2 2 2
+2 2 2 2 0
+0 0 2 2 2
+1 4 2 0 0
+```
+- **Estagnação**:  
+  - Matriz mantém-se inalterada (fogo não avança mais).  
+
+- **Movimento do Animal**:  
+  - Última posição: `(4,3)` (passos: 6), permanecendo em área segura (`0`).  
+
+## **Conclusão da Simulação**  
+- **Animal sobreviveu!**  
+  - **Passos totais**: 6.  
+  - **Água encontrada**: 2 vezes (Iterações 1 e 3).  
+  - **Posição final**: `(4,3)`.  
 
 
