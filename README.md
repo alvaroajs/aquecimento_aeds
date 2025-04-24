@@ -410,4 +410,13 @@ Temos aqui um exemplo de uma matriz 5x5, a primeira linha é referente aos dados
   - **Água encontrada**: 2 vezes (Iterações 1 e 3).  
   - **Posição final**: `(4,3)`.  
 
+---
+# 💻 Ambiente de Teste  
 
+## Especificações Técnicas  
+- **Sistema Operacional**: Ubuntu 24.04.1 LTS 
+- **Processador**: Intel® Core™ i7-8550U (4 núcleos, 8 threads, base clock de 1.8 GHz, turbo até 4.0 GHz).  
+- **Memória RAM**: 16.0 GiB DDR4   
+- **Armazenamento**: SSD de 512.1 GB 
+
+---
