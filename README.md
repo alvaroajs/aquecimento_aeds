@@ -236,9 +236,6 @@ void simulacao(){
 ---
 ### Módulo de Leitura/Escrita (`leitura_escrita.cpp` e `leitura_escrita.hpp`)
 
-### Funções Principais:
-
-
 #### **`abrirArquivo()`**  
 **Propósito**: Abre o arquivo de entrada `input.dat` para leitura.  
 **Funcionalidades**:  
