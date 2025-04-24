@@ -248,7 +248,7 @@ void simulacao(){
 **Código**:  
 ```cpp
 #include "leitura_escrita.hpp"
-
+### tuple<int, int, int, int> setPosAnimal(vector<vector<int>>& inicialMatrix, int lineSize, int columSize);
 ifstream abrirArquivo() {
     ifstream input("data/input.dat");   
     return input;
@@ -285,6 +285,38 @@ void escreverNoOutput(string mensagem) {
         cout << "Erro ao abrir o arquivo de saída." << endl;
     }
 }
+```
+### Função `setPosAnimal()`  
+
+#### **Propósito**  
+Definir a posição inicial do animal na matriz, garantindo que ele comece em uma **célula segura** (valor `0`).  
+
+
+#### **Funcionamento**  
+1. **Busca da Posição Segura**:  
+   - Percorre a matriz de **baixo para cima** (última linha até a primeira) e da **direita para a esquerda** (última coluna até a primeira).  
+   - Retorna a **primeira célula `0` encontrada** nessa ordem de busca.  
+
+2. **Estrutura da Tupla**:  
+   - **`(x, y, passos, estado)`**:  
+     - `x`, `y`: Coordenadas da célula segura encontrada.  
+     - `passos`: Inicializado em `0` (contador de movimentos).  
+     - `estado`: `0` (vivo) ou `-1` (morto).
+***Código***
+```cpp
+tuple<int, int, int, int> setPosAnimal(vector<vector<int>>& inicialMatrix, int lineSize, int columSize){
+    int x = 0, y = 0;
+
+    for (int i = (lineSize - 1); i >= 0; i--){
+        for(int j = columSize - 1; j >= 0; j--){
+            if(inicialMatrix[i][j]  == 0){
+                return make_tuple(i, j, 0, 0);
+            }
+        }
+    }
+    return make_tuple(0, 0, 0, 0);
+}
+
 ```
 ---
 # 🧪 Casos de Teste
