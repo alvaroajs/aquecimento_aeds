@@ -433,12 +433,34 @@ Temos aqui um exemplo de uma matriz 5x5, a primeira linha é referente aos dados
   - **Posição final**: `(4,3)`.  
 
 ---
-# 💻 Ambiente de Teste  
+# Compilação e Execução
 
-## Especificações Técnicas  
-- **Sistema Operacional**: Ubuntu 24.04.1 LTS 
-- **Processador**: Intel® Core™ i7-8550U (4 núcleos, 8 threads, base clock de 1.8 GHz, turbo até 4.0 GHz).  
-- **Memória RAM**: 16.0 GiB DDR4   
-- **Armazenamento**: SSD de 512.1 GB 
+A estrutura árvore disponibilizada possui um arquivo Makefile que realiza todo o procedimento de compilação e execução. Para tanto, temos as seguintes diretrizes de execução:
+
+
+| Comando                |  Função                                                                                           |                     
+| -----------------------| ------------------------------------------------------------------------------------------------- |
+|  `make clean`          | Apaga a última compilação realizada contida na pasta build                                        |
+|  `make`                | Executa a compilação do programa utilizando o gcc, e o resultado vai para a pasta build           |
+|  `make run`            | Executa o programa da pasta build após a realização da compilação                                 |
 
 ---
+
+# Autores
+
+Este projeto foi desenvolvido por Álvaro Silva como parte da disciplina Algoritmos e Estrutura de Dados I.
+Fico à disposição para dúvidas, sugestões ou colaborações. Sinta-se à vontade para entrar em contato!
+
+
+<a href="https://www.linkedin.com/in/alvarosilvamg/">
+<img align="center" height="20px" width="90px" src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/>
+</a>
+
+</div>
+
+<p> </p>
+
+
+<a style="color:black" href="mailto:alvaro.ajsilva@gmail.com?subject=[GitHub]%20Source%20Dynamic%20Lists">
+✉️ <i>alvaro.ajsilva@gmail.com</i>
+</a>
