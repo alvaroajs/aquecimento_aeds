@@ -4,7 +4,7 @@
   <img src="img/incencioFlorestal.gif" width="350"/>
 </div>
 
-## Introdução  
+# Introdução  
 
 A propagação de incêndios florestais é um fenômeno crítico, influenciado por fatores como densidade da vegetação, condições climáticas e interações dinâmicas com o ambiente. Este projeto tem como objetivo implementar um **simulador computacional** que modela a expansão do fogo em uma floresta representada por uma matriz, além de incorporar a movimentação inteligente de um animal em busca de rotas de fuga.  
 
@@ -21,7 +21,7 @@ A floresta é modelada como uma **matriz dinâmica** de dimensões `N × M`, ond
 
 - **Propagação do Fogo**  
   - Implementar dois modos de propagação:  
-    - **Sem vento**: Expansão linear para todas as direções ortogonais.  
+    - **Sem vento**: Expansão linear para todas as direções ortogonais (configurável via `config.hpp` com todas as direções `true`)
     - **Com vento**: Direcionamento preferencial (configurável via `config.hpp`).  
   - Garantir que árvores em chamas (`2`) se tornem queimadas (`3`) após um ciclo.  
 
@@ -154,10 +154,64 @@ Edite o arquivo `config.hpp` e altere o valor da constante:
 const int K_MAX = 50;  // Altere para o número desejado
 ```
 
-## Principais Funções do Código  
+# 📋 Metodologia  
 
-Para organizar a explicação das funções, comece pela **função principal** que coordena a simulação e depois detalhe as subfunções. Segue uma sugestão de estrutura:
+### **Abordagem Geral**  
+O projeto foi desenvolvido seguindo uma abordagem **modular e iterativa**, priorizando:  
+**Clareza de Código**: Divisão em funções especializadas (`simulacao()`, `interation()`, `moverAnimal()`).  
+**Eficiência Computacional**: Uso de estruturas de dados otimizadas (`vector<vector<int>>` para matriz dinâmica).  
 
+
+### **Etapas do Desenvolvimento**  
+
+#### 1. **Modelagem da Floresta**  
+- **Matriz Dinâmica**: Representação da floresta via `vector<vector<int>>`, permitindo redimensionamento conforme o `input.dat`.  
+- **Estados das Células**: 
+
+#### 2. **Leitura de Dados**  
+- **Arquivo `input.dat`**:  
+  - Leitura das dimensões da matriz, posição inicial do fogo e configuração do ambiente.  
+  - Validação implícita (ex: células fora dos limites são ignoradas).  
+
+#### 3. **Propagação do Fogo**  
+- **Lógica por Iteração**:  
+  - Criação de uma cópia da matriz (`novaMatriz`) para evitar alterações conflitantes durante a mesma iteração.  
+  - Propagação condicional baseada em `config.hpp` (direção do vento).  
+  - Atualização de células em chamas para queimadas após 2 ciclos.  
+
+#### 4. **Movimentação do Animal**  
+- **Priorização de Rotas**:  
+  - Busca por água (`4`) → árvores saudáveis (`1`) → áreas vazias (`0`) → árvores queimadas (`3`).  
+  - Mecanismo de "segunda chance" se o animal for atingido pelo fogo.  
+- **Registro de Dados**:  
+  - Passos, posições visitadas e eventos críticos salvos no `output.dat`.  
+
+#### 5. **Escrita de Resultados**  
+- **Arquivo `output.dat`**:  
+  - Gravação do estado da matriz a cada iteração.  
+  - Relatório final com posição, passos e status do animal.  
+
+---
+
+---
+
+### **Decisões de Design**  
+- **Tupla para o Animal**:  
+  - Uso de `tuple<int, int, int, int>` para armazenar posição (`x`, `y`), passos e estado em uma única estrutura.  
+- **Vetor de Propagação**:  
+  - `vector<tuple<int, int, int>>` para rastrear células em chamas e seu tempo de queima.  
+- **Configuração Global**:  
+  - Parâmetros em `config.hpp` para facilitar ajustes sem recompilar o código-fonte.  
+
+---
+
+### **Limitações Conhecidas**  
+- **Performance em Matrizes Muito Grandes**:  
+  - Complexidade O(N²) por iteração pode ser custosa para matrizes > 1000x1000.  
+- **Interface Não Interativa**:  
+  - Não há opção de pausar/retomar a simulação ou ajustar parâmetros em tempo real.  
+
+Esta metodologia garantiu um equilíbrio entre **fidelidade às especificações**, **eficiência** e **organização de código**. 🔥📊  
 ---
 
 ### **`simulacao()`** (`simulacao.cpp`)  
@@ -170,7 +224,7 @@ Para organizar a explicação das funções, comece pela **função principal** 
 - Exibe a matriz atualizada a cada iteração (via `showMatrix()`).  
 - Grava resultados no `output.dat`.  
 
-**Codigo**:  
+**Função principal**:  
 ```cpp
 void simulacao(){
     int lineSize = 0, columSize = 0, fireStart_X = 0, fireStart_Y = 0;
@@ -226,92 +280,41 @@ void simulacao(){
     return;
 }
 ```
----
-### Módulo de Leitura/Escrita (`leitura_escrita.cpp` e `leitura_escrita.hpp`)
-
-#### **`abrirArquivo()`**  
-**Propósito**: Abre o arquivo de entrada `input.dat` para leitura.  
-**Funcionalidades**:  
-- Define o caminho do arquivo como `data/input.dat`.  
-- Retorna um objeto `ifstream` para operações de leitura.  
-- **Validação**: Se o arquivo não existir ou não puder ser aberto, o erro é tratado posteriormente em `simulacao()`.
-- Define o caminho do arquivo de saída `output.dat`.
-- Escreve no arquivo de saída.
-
-**Código**:  
-```cpp
-#include "leitura_escrita.hpp"
-### tuple<int, int, int, int> setPosAnimal(vector<vector<int>>& inicialMatrix, int lineSize, int columSize);
-ifstream abrirArquivo() {
-    ifstream input("data/input.dat");   
-    return input;
-
-}
-ifstream abrirSaida() {
-    const string caminho = "data/output.dat";
-
+***Fluxograma de decições:***
+```mermaid
+flowchart TD
+    A[Início] --> B[Simulação]
+    B --> F[Fim]
     
-    ofstream limpaArquivo(caminho); 
-    limpaArquivo.close();
-
-    ifstream output(caminho);
-    return output;
-}
-
-vector<vector<int>> lerMatriz(ifstream &input, int lineSize, int columSize) {
+    subgraph Simulacao[Simulação]
+        S1[Inicializar: Carregar matriz\ne posicionar animal] --> S2[Loop para K_MAX iterações]
+        S2 --> S3[Propagar fogo]
+        S3 --> S4[Mover animal]
+        S4 --> S5{Continuar?}
+        S5 -->|Sim| S2
+        S5 -->|Não| S6[Encerrar]
+    end
     
-    vector<vector<int>> matriz(lineSize, vector<int>(columSize)); 
-    for (int i = 0; i < lineSize; i++) {
-        for (int j = 0; j < columSize; j++) {
-            input >> matriz[i][j];
-        }
-    }    
-    return matriz;
-}
-
-void escreverNoOutput(string mensagem) {
-    ofstream output("data/output.dat", ios::app);
-    if (output.is_open()) {
-        output << mensagem;
-        output.close();
-    } else {
-        cout << "Erro ao abrir o arquivo de saída." << endl;
-    }
-}
+    subgraph PropagacaoFogo[Propagar Fogo]
+        P1[Verificar células em chamas] --> P2[Espalhar para células vizinhas\nconforme direção do vento]
+    end
+    
+    subgraph MoverAnimal[Mover Animal]
+        M1{Posição em perigo?} -->|Sim| M2[Tentar escapar]
+        M1 -->|Não| M3[Mover por prioridade]
+        M2 --> M4{Encontrou água?}
+        M3 --> M4
+        M4 -->|Sim| M5[Apagar fogo adjacente]
+    end
+    
+    S3 --> PropagacaoFogo
+    P2 --> S4
+    S4 --> MoverAnimal
+    M5 --> S5
 ```
-### Função `setPosAnimal()`  
 
-#### **Propósito**  
-Definir a posição inicial do animal na matriz, garantindo que ele comece em uma **célula segura** (valor `0`).  
-
-
-#### **Funcionamento**  
-1. **Busca da Posição Segura**:  
-   - Percorre a matriz de **baixo para cima** (última linha até a primeira) e da **direita para a esquerda** (última coluna até a primeira).  
-   - Retorna a **primeira célula `0` encontrada** nessa ordem de busca.  
-
-2. **Estrutura da Tupla**:  
-   - **`(x, y, passos, estado)`**:  
-     - `x`, `y`: Coordenadas da célula segura encontrada.  
-     - `passos`: Inicializado em `0` (contador de movimentos).  
-     - `estado`: `0` (vivo) ou `-1` (morto).
-***Código***
-```cpp
-tuple<int, int, int, int> setPosAnimal(vector<vector<int>>& inicialMatrix, int lineSize, int columSize){
-    int x = 0, y = 0;
-
-    for (int i = (lineSize - 1); i >= 0; i--){
-        for(int j = columSize - 1; j >= 0; j--){
-            if(inicialMatrix[i][j]  == 0){
-                return make_tuple(i, j, 0, 0);
-            }
-        }
-    }
-    return make_tuple(0, 0, 0, 0);
-}
-
-```
 ---
+
 # 🧪 Casos de Teste
 
 Temos aqui um exemplo de uma matriz 5x5, a primeira linha é referente aos dados da matriz, sendo os dois primeiros números as dimensões linhas e colunas, respectivamente, já os dois últimos numéros as cordenadas do ínicio do íncendio, para esse teste temos o fogo se propagando para todas as direções ortogonais
