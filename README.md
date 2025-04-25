@@ -147,13 +147,6 @@ Assim como a configuração do vento, a constante **`K_MAX`**, definida no arqui
     }
     ```  
 
-### Por Que Ajustar `K_MAX`?  
-1. **Cenários de Curto Prazo**:  
-   - Valores menores (ex: `K_MAX = 10`) são úteis para simular incêndios rápidos ou testar comportamentos iniciais do animal.  
-
-2. **Cenários de Longo Prazo**:  
-   - Valores maiores (ex: `K_MAX = 100`) permitem analisar padrões de propagação em florestas extensas ou avaliar a eficiência do algoritmo em matrizes grandes.  
-
 
 ### Como Modificar `K_MAX`  
 Edite o arquivo `config.hpp` e altere o valor da constante:  
