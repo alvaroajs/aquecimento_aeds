@@ -193,28 +193,18 @@ O projeto foi desenvolvido seguindo uma abordagem **modular e iterativa**, prior
   - Gravação do estado da matriz a cada iteração.  
   - Relatório final com posição, passos e status do animal.  
 
----
-
----
 
 ### **Decisões de Design**  
 - **Tupla para o Animal**:  
-  - Uso de `tuple<int, int, int, int>` para armazenar posição (`x`, `y`), passos e estado em uma única estrutura.  
+  - Uso de `tuple<int, int, int, int>` para armazenar posição a posição `x` e `y` do animal, quantidade de passos e se ele esta morto (`-1 para morto`), respectivamete
 - **Vetor de Propagação**:  
   - `vector<tuple<int, int, int>>` para rastrear células em chamas e seu tempo de queima.  
 - **Configuração Global**:  
-  - Parâmetros em `config.hpp` para facilitar ajustes sem recompilar o código-fonte.  
-
----
+  - Parâmetros em `config.hpp` para facilitar ajustes sem recompilar o código-fonte.
 
 ### **Limitações Conhecidas**  
 - **Performance em Matrizes Muito Grandes**:  
   - Complexidade O(N²) por iteração pode ser custosa para matrizes > 1000x1000.  
-- **Interface Não Interativa**:  
-  - Não há opção de pausar/retomar a simulação ou ajustar parâmetros em tempo real.  
-
-Esta metodologia garantiu um equilíbrio entre **fidelidade às especificações**, **eficiência** e **organização de código**. 🔥📊  
----
 
 ### **`simulacao()`** (`simulacao.cpp`)  
 **Propósito**: Função principal que gerencia o fluxo completo da simulação.  
@@ -483,13 +473,16 @@ Fico à disposição para dúvidas, sugestões ou colaborações. Sinta-se à vo
 
 
 <a href="https://www.linkedin.com/in/alvarosilvamg/">
-<img align="center" height="20px" width="90px" src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/>
+  <img align="center" height="20px" width="90px" src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/>
 </a>
-
-</div>
 
 <p> </p>
 
+<a href="https://github.com/alvaroajs">
+  <img align="center" height="20px" width="90px" src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/>
+</a>
+
+<p> </p>
 
 <a style="color:black" href="mailto:alvaro.ajsilva@gmail.com?subject=[GitHub]%20Source%20Dynamic%20Lists">
 ✉️ <i>alvaro.ajsilva@gmail.com</i>
