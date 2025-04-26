@@ -442,6 +442,15 @@ Temos aqui um exemplo de uma matriz 8x8, a primeira linha é referente aos dados
 #### 📝 ***Observação: Para reproduzir, certifique-se de que `config.hpp` tenha todas as direções do vento ativas (`northWind = eastWind = southWind = westWind = true`).*** 
 ---
 # Compilação e Execução
+#### Clonando repositório
+
+Para começar, clone este repositório com o comando:
+
+```bash
+git clone https://github.com/alvaroajs/aquecimento_aeds
+```
+
+#### Makefile
 
 A estrutura árvore disponibilizada possui um arquivo Makefile que realiza todo o procedimento de compilação e execução. Para tanto, temos as seguintes diretrizes de execução:
 
