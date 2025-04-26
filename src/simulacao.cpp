@@ -31,23 +31,17 @@ void simulacao(){
     for(int k = 0; k < K_MAX; k++){
         stop = interation(inicialMatrix, lineSize, columSize, fireStart_X, fireStart_Y, propag, k); 
         moverAnimal(animal, inicialMatrix, lineSize, columSize);
-        escreverNoOutput(oss.str());
         showMatrix(inicialMatrix, lineSize, columSize, k);
         if(!stop){
-
-            {
-                if(get<3>(animal) != -1){
-
-                    oss << "Animal sobreviveu, parou na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";    
-                    escreverNoOutput(oss.str());
-                    direcaoVento();
-                }
-                else{
-                    oss << "Animal morreu na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";
-                    escreverNoOutput(oss.str());
-                    direcaoVento();
-                }
+            if(get<3>(animal) != -1){
+                oss << "Animal sobreviveu, parou na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";    
+                escreverNoOutput(oss.str());
             }
+            else{
+                oss << "Animal morreu na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";
+                escreverNoOutput(oss.str());
+            }
+            direcaoVento();
             break;
         }
 

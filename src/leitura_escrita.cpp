@@ -29,10 +29,8 @@ vector<vector<int>> lerMatriz(ifstream &input, int lineSize, int columSize) {
 
 void escreverNoOutput(string mensagem) {
     ofstream output("data/output.dat", ios::app);
-    if (output.is_open()) {
-        output << mensagem;
-        output.close();
-    } else {
-        cout << "Erro ao abrir o arquivo de saída." << endl;
-    }
+   
+    output << mensagem;
+    output.close();
+    
 }
