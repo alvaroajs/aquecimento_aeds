@@ -14,7 +14,7 @@ void showMatrix(vector<vector<int>>& matriz, int lineSize, int columSize, int k)
 
 tuple<int, int, int, int> setPosAnimal(vector<vector<int>>& inicialMatrix, int lineSize, int columSize);
 
-void moverAnimal(tuple<int, int, int, int>& animal, pair<int, int>& animalPosAnt, vector<vector<int>>& matriz, int lineSize, int columSize);
+void moverAnimal(tuple<int, int, int, int>& animal, vector<vector<int>>& matriz, int lineSize, int columSize);
 
 bool posicaoValida(int x, int y, int linhas, int colunas);
 
