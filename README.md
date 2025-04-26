@@ -488,7 +488,7 @@ Implementar uma função para definir a posição inicial do animal **o mais dis
 
 
 ---
-# Autores
+# Autor
 
 Este projeto foi desenvolvido por Álvaro Silva como parte da disciplina Algoritmos e Estrutura de Dados I.
 Fico à disposição para dúvidas, sugestões ou colaborações. Sinta-se à vontade para entrar em contato!
