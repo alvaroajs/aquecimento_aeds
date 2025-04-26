@@ -17,7 +17,7 @@ A floresta é modelada como uma **matriz dinâmica** de dimensões `N × M`, ond
 - `3`: Árvore queimada (não propaga mais fogo).  
 - `4`: Fonte de água (extingue fogo e protege áreas adjacentes).
 
-## Objetivos e Desafios  
+### Objetivos e Desafios  
 
 - **Propagação do Fogo**  
   - Implementar dois modos de propagação:  
@@ -44,12 +44,12 @@ O código foi desenvolvido utilizando as seguintes ferramentas:
 
 ## ⚙️ Ambiente de Compilação
 
-O projeto foi compilado utilizando a ferramenta abaixo:
+O projeto foi compilado utilizando a ferramenta MakeFile:
 
 [![Compilador](https://img.shields.io/badge/Ferramenta-Make-orange)](https://www.gnu.org/software/make/)
 
 ## 📁 Estrutura de Diretórios
-## 📁 Estrutura de Diretórios
+
 
 ```text
 📦 aquecimento_aeds
@@ -69,11 +69,11 @@ O projeto foi compilado utilizando a ferramenta abaixo:
 ├── 📄 README.md             # Documentação do projeto
 ```
 
-## Direções do Vento e numero de interações
+###Direções do Vento e numero de interações
 
 A propagação do fogo é diretamente afetada pela configuração do vento no arquivo `config.hpp`. Cada direção corresponde a um movimento ortogonal específico na matriz, simulando como o vento "empurra" as chamas. Abaixo está a explicação detalhada de cada parâmetro:  
 
-### 1. **`northWind` (Vento Norte)**  
+### **`northWind` (Vento Norte)**  
 - **Efeito**: Permite que o fogo se propague para **cima** (direção norte).  
 - **Comportamento na Matriz**:  
   - Se uma célula em chamas `(i, j)` tem `northWind = true`, ela irá incendiar a célula acima: `(i-1, j)`.  
@@ -83,9 +83,9 @@ A propagação do fogo é diretamente afetada pela configuração do vento no ar
     ```  
 - **Cenário Típico**: Simula um vento soprando **do sul para o norte**, acelerando a propagação em direção ao topo da matriz.  
 
----
 
-### 2. **`eastWind` (Vento Leste)**  
+
+### **`eastWind` (Vento Leste)**  
 - **Efeito**: Permite que o fogo se propague para a **direita** (direção leste).  
 - **Comportamento na Matriz**:  
   - Se uma célula em chamas `(i, j)` tem `eastWind = true`, ela irá incendiar a célula à direita: `(i, j+1)`.  
@@ -95,9 +95,8 @@ A propagação do fogo é diretamente afetada pela configuração do vento no ar
     ```  
 - **Cenário Típico**: Simula um vento soprando **do oeste para o leste**, comum em regiões costeiras.  
 
----
 
-### 3. **`southWind` (Vento Sul)**  
+###  **`southWind` (Vento Sul)**  
 - **Efeito**: Permite que o fogo se propague para **baixo** (direção sul).  
 - **Comportamento na Matriz**:  
   - Se uma célula em chamas `(i, j)` tem `southWind = true`, ela irá incendiar a célula abaixo: `(i+1, j)`.  
@@ -107,9 +106,9 @@ A propagação do fogo é diretamente afetada pela configuração do vento no ar
     ```  
 - **Cenário Típico**: Simula um vento soprando **do norte para o sul**, comum em áreas montanhosas.  
 
----
 
-### 4. **`westWind` (Vento Oeste)**  
+
+### **`westWind` (Vento Oeste)**  
 - **Efeito**: Permite que o fogo se propague para a **esquerda** (direção oeste).  
 - **Comportamento na Matriz**:  
   - Se uma célula em chamas `(i, j)` tem `westWind = true`, ela irá incendiar a célula à esquerda: `(i, j-1)`.  
@@ -121,7 +120,7 @@ A propagação do fogo é diretamente afetada pela configuração do vento no ar
 
 ---
 
-### Combinações de Vento  
+## Combinações de Vento  
 - **Vento Omnidirecional** (padrão):  
   ```cpp
   const bool northWind = true;
@@ -130,7 +129,7 @@ A propagação do fogo é diretamente afetada pela configuração do vento no ar
   const bool westWind = true;
   ```
 
-### Controle de Iterações: A Constante `K_MAX`  
+## Controle de Iterações: A Constante `K_MAX`  
 
 Assim como a configuração do vento, a constante **`K_MAX`**, definida no arquivo `config.hpp`, determina o **número máximo de iterações** que a simulação pode executar. Esse parâmetro é essencial para garantir que a simulação não entre em loop infinito e para comparar desempenho em diferentes cenários.  
 
@@ -153,6 +152,7 @@ Edite o arquivo `config.hpp` e altere o valor da constante:
 ```cpp
 const int K_MAX = 50;  // Altere para o número desejado
 ```
+---
 
 # 📋 Metodologia  
 
