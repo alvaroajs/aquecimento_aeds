@@ -30,9 +30,6 @@ A floresta é modelada como uma **matriz dinâmica** de dimensões `N × M`, ond
   - Oferecer "segunda chance" de movimento se o animal for atingido pelo fogo.  
   - Registrar trajetória, passos e eventos críticos (ex: morte do animal).  
 
-- **Eficiência Computacional**  
-  - Utilizar estruturas de dados otimizadas (e.g., `vector<vector<int>>` para a matriz).  
-  - Garantir desempenho escalável para matrizes grandes (ex: `100x100`).
 
 ## 🖥️ Ambiente de Criação
 
