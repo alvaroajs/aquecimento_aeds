@@ -469,9 +469,9 @@ Os resultados dos testes foram satisfatórios:
 - **Movimentação do Animal**: Seguiu a ordem de prioridade estabelecida (água → árvore saudável → área vazia), com mecanismo de segunda chance funcional.  
 
 O simulador demonstrou ser uma ferramenta robusta para analisar padrões de propagação e estratégias de fuga em tempo real.  
-## Melhorias Futuras  
+### Melhorias Futuras  
 
-###Posicionamento Inteligente do Animal
+#### Posicionamento Inteligente do Animal
 Implementar uma função para definir a posição inicial do animal **o mais distante possível do fogo inicial**, utilizando a **distância de Manhattan**.  
 
 
