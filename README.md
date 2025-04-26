@@ -224,6 +224,7 @@ void simulacao(){
     ifstream input =  abrirArquivo(); //funcao abrirArquivo() retorna um um ponteiro do tipo ifstream
     ifstream output = abrirSaida();
     bool stop;
+    ostringstream oss;
 
     vector<tuple<int, int, int>> propag;
 
@@ -245,21 +246,23 @@ void simulacao(){
     animal = setPosAnimal(inicialMatrix,lineSize, columSize); 
     
     for(int k = 0; k < K_MAX; k++){
-        cout << "\nInteracao: " << k + 1 << endl;
         stop = interation(inicialMatrix, lineSize, columSize, fireStart_X, fireStart_Y, propag, k); 
         moverAnimal(animal, inicialMatrix, lineSize, columSize);
+        escreverNoOutput(oss.str());
         showMatrix(inicialMatrix, lineSize, columSize, k);
         if(!stop){
+
             {
                 if(get<3>(animal) != -1){
-                    ostringstream oss;
-                    oss << "Animal parou na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";
+
+                    oss << "Animal sobreviveu, parou na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";    
                     escreverNoOutput(oss.str());
+                    direcaoVento();
                 }
                 else{
-                    ostringstream oss;
                     oss << "Animal morreu na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";
                     escreverNoOutput(oss.str());
+                    direcaoVento();
                 }
             }
             break;
@@ -271,6 +274,7 @@ void simulacao(){
 
     return;
 }
+
 ```
 ***Fluxograma de decições:***
 ```mermaid
