@@ -19,3 +19,5 @@ void moverAnimal(tuple<int, int, int, int>& animal, vector<vector<int>>& matriz,
 bool posicaoValida(int x, int y, int linhas, int colunas);
 
 void apagarFogo(int x, int y, vector<vector<int>>& matriz, int lineSize, int columSize);
+
+void direcaoVento();

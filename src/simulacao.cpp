@@ -29,22 +29,23 @@ void simulacao(){
     animal = setPosAnimal(inicialMatrix,lineSize, columSize); 
     
     for(int k = 0; k < K_MAX; k++){
-        cout << "\nInteracao: " << k + 1 << endl;
         stop = interation(inicialMatrix, lineSize, columSize, fireStart_X, fireStart_Y, propag, k); 
         moverAnimal(animal, inicialMatrix, lineSize, columSize);
+        escreverNoOutput(oss.str());
         showMatrix(inicialMatrix, lineSize, columSize, k);
-        cout << "Animal na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos" << endl;
         if(!stop){
-            cout << "Animal parou na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos" << endl;
 
             {
                 if(get<3>(animal) != -1){
-                    oss << "Animal parou na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";
+
+                    oss << "Animal sobreviveu, parou na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";    
                     escreverNoOutput(oss.str());
+                    direcaoVento();
                 }
                 else{
                     oss << "Animal morreu na posição x: " << get<0>(animal) << " y: " << get<1>(animal) << " com " << get<2>(animal) << " passos.\n";
                     escreverNoOutput(oss.str());
+                    direcaoVento();
                 }
             }
             break;
@@ -108,11 +109,7 @@ bool interation(vector<vector<int>>& matriz, int linhas, int colunas, int fireSt
 
     if (k >= 1) {
         matriz[fireStart_X][fireStart_Y] = 3;
-    }
-
-    cout << "\nMatriz atualizada:\n" << endl;
-
-    
+    }    
     return (!novasPropagacoes.empty() || !propag.empty());
 }
 
@@ -136,14 +133,11 @@ void moverAnimal(tuple<int, int, int, int>& animal, vector<vector<int>>& matriz,
     int passos = get<2>(animal);
     int parado = get<3>(animal);
     
-    // Se já morreu, não faz nada
     if (parado == -1) return;
     
-    // Array com as 4 direções possíveis (norte, sul, leste, oeste)
     const int dx[4] = {-1, 1, 0, 0};
     const int dy[4] = {0, 0, 1, -1};
     
-    // Verifica se a posição atual está em chamas
     bool emPerigo = (matriz[x][y] == 2);
     
     // Função para verificar se animal pode se mover para uma célula com valor específico
@@ -153,7 +147,7 @@ void moverAnimal(tuple<int, int, int, int>& animal, vector<vector<int>>& matriz,
             int ny = y + dy[i];
             
             if (posicaoValida(nx, ny, lineSize, columSize) && matriz[nx][ny] == valorCelula) {
-                // Caso especial para água
+    
                 if (valorCelula == 4) {
                     apagarFogo(nx, ny, matriz, lineSize, columSize);
                     matriz[nx][ny] = 0; // Transforma água em espaço vazio após uso
@@ -166,40 +160,35 @@ void moverAnimal(tuple<int, int, int, int>& animal, vector<vector<int>>& matriz,
         return false;
     };
     
-    // Tenta encontrar células na ordem de prioridade
-    if (procurarCelula(4)) return;      // Prioridade 1: Água
-    if (procurarCelula(1)) return;      // Prioridade 2: Árvore saudável
-    if (procurarCelula(0)) return;      // Prioridade 3: Área vazia
-    if (procurarCelula(3)) return;      // Prioridade 4: Árvore queimada
+    // tenta encontrar células na ordem de prioridade
+    if (procurarCelula(4)) return;      // prioridade 1: Água
+    if (procurarCelula(1)) return;      // prioridade 2: Árvore saudável
+    if (procurarCelula(0)) return;      // prioridade 3: Área vazia
+    if (procurarCelula(3)) return;      // prioridade 4: Árvore queimada
     
     // Se chegou aqui, não conseguiu se mover
-    if (emPerigo) {
+    if (emPerigo) {// segunda chance falhou - o animal morre
         // Segunda chance falhou - o animal morre
         animal = make_tuple(x, y, passos, -1);
     } 
-    else if (matriz[x][y] == 0 && parado <= 2) {
-        // Pode permanecer em área vazia por até 3 iterações
+    else if (matriz[x][y] == 0 && parado <= 2) {// pode permanecer em área vazia por até 3 iterações
         animal = make_tuple(x, y, passos, parado + 1);
     }
-    else if (matriz[x][y] == 0 && parado > 2) {
-        // Animal não conseguiu se mover após 3 iterações
+    else if (matriz[x][y] == 0 && parado > 2) { // animal não conseguiu se mover após 3 iterações
         animal = make_tuple(x, y, passos, -1);
     }
-    else {
-        // Para qualquer outro caso, o animal permanece onde está
+    else { // para qualquer outro caso, o animal permanece onde está
         animal = make_tuple(x, y, passos, parado);
     }
 }
 void showMatrix(vector<vector<int>>& matriz, int lineSize, int columSize, int k){
-    escreverNoOutput("\nInteracao: " + to_string(k + 1) + "\n");
+    escreverNoOutput("Interacao: " + to_string(k + 1) + "\n");
     for(int i = 0; i < lineSize; i++){
         for(int j = 0; j < columSize; j++){
-            cout << matriz[i][j] << " ";
             escreverNoOutput(to_string(matriz[i][j])); // escreve no arquivo de saída
             escreverNoOutput(" ");
         }
         escreverNoOutput("\n");
-        cout << endl;
     }
     escreverNoOutput("\n");
 
@@ -211,15 +200,31 @@ bool posicaoValida(int x, int y, int linhas, int colunas) {
 void apagarFogo(int x, int y, vector<vector<int>>& matriz, int lineSize, int columSize){
     matriz[x][y] = 0;
     if(posicaoValida(x + 1, y, lineSize, columSize) && matriz[x + 1][y] == 2){
-        matriz[x + 1][y] = 1; // Apaga o fogo
+        matriz[x + 1][y] = 1; 
     }
     if(posicaoValida(x - 1, y, lineSize, columSize) && matriz[x - 1][y] == 2){
-        matriz[x - 1][y] = 1; // Apaga o fogo
+        matriz[x - 1][y] = 1; 
     }
     if(posicaoValida(x, y + 1, lineSize, columSize) && matriz[x][y + 1] == 2){
-        matriz[x][y + 1] = 1; // Apaga o fogo
+        matriz[x][y + 1] = 1; 
     }
     if(posicaoValida(x, y - 1, lineSize, columSize) && matriz[x][y - 1] == 2){
-        matriz[x][y - 1] = 1; // Apaga o fogo
+        matriz[x][y - 1] = 1; 
     }
+}
+
+void direcaoVento(){
+    if(southWind == true){
+        escreverNoOutput("Vento Sul ativo\n");
+    }
+    if(northWind == true){
+        escreverNoOutput("Vento Norte ativo\n");
+    }
+    if(eastWind == true){
+        escreverNoOutput("Vento Leste ativo\n");
+    }
+    if(westWind == true){
+        escreverNoOutput("Vento Oeste ativo\n");
+    }
+    return;
 }
