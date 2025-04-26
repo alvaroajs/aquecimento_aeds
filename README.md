@@ -196,7 +196,7 @@ O projeto foi desenvolvido seguindo uma abordagem **modular e iterativa**, prior
 
 ### **Decisões de Design**  
 - **Tupla para o Animal**:  
-  - Uso de `tuple<int, int, int, int>` para armazenar posição a posição `x` e `y` do animal, quantidade de passos e se ele esta morto (`-1 para morto`), respectivamete
+  - Uso de `tuple<int, int, int, int>` para armazenar posição a posição `x` e `y` do animal, quantidade de passos e se ele esta morto (`-1 para morto`), respectivamente.
 - **Vetor de Propagação**:  
   - `vector<tuple<int, int, int>>` para rastrear células em chamas e seu tempo de queima.  
 - **Configuração Global**:  
@@ -433,8 +433,17 @@ Temos aqui um exemplo de uma matriz 8x8, a primeira linha é referente aos dados
 0 3 3 3 3 0 0 4 
 4 4 4 4 4 1 1 1 
 1 4 0 0 1 0 0 0 
-0 4 1 4 4 0 0 0 
+0 4 1 4 4 0 0 0
 ```
+***output.dat***
+```
+Animal sobreviveu, parou na posição x: 0 y: 4 com 7 passos.
+Vento Sul ativo
+Vento Norte ativo
+Vento Leste ativo
+Vento Oeste ativo
+```
+
 ### **Conclusão da simulação**  
 - **Simulação Correta**: O fogo propagou-se conforme as regras, e o animal encontrou uma rota segura.  
 - **Desempenho**: 6 iterações para extinção total do fogo.
@@ -471,7 +480,7 @@ O simulador demonstrou ser uma ferramenta robusta para analisar padrões de prop
 ### Melhorias Futuras  
 
 #### Posicionamento Inteligente do Animal
-Implementar uma função para definir a posição inicial do animal **o mais distante possível do fogo inicial**, utilizando a **distância de Manhattan**.  
+Implementar uma função para definir a posição inicial do animal **o mais distante possível do inicio do fogo**, utilizando a **distância de Manhattan**.  
 
 
 ---
