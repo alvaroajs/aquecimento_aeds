@@ -325,7 +325,7 @@ Temos aqui um exemplo de uma matriz 8x8, a primeira linha é referente aos dados
 0 4 1 4 4 0 4 4
 ``` 
 
-***🔥 Análise Detalhada por Iteração***
+## ***🔥 Análise Detalhada por Iteração***
 
 ### **Iteração 1**  
 - **Fogo em (2,3)**:  
