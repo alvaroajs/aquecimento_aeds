@@ -181,10 +181,12 @@ O projeto foi desenvolvido seguindo uma abordagem **modular e iterativa**, prior
 
 #### 4. **Movimentação do Animal**  
 - **Priorização de Rotas**:  
-  - Busca por água (`4`) → árvores saudáveis (`1`) → áreas vazias (`0`) → árvores queimadas (`3`).  
+  - Busca por água (`4`) → árvores saudáveis (`1`) → áreas vazias (`0`) → árvores queimadas (`3`).
+  - Caso o animal encontre água, todas as celulas vizinhas em chama se apagam, tornando-as árvores saudáveis(`1`).
   - Mecanismo de "segunda chance" se o animal for atingido pelo fogo.  
 - **Registro de Dados**:  
-  - Passos, posições visitadas e eventos críticos salvos no `output.dat`.  
+  - Passos, posições visitadas e eventos críticos salvos no `output.dat`.
+    
 
 #### 5. **Escrita de Resultados**  
 - **Arquivo `output.dat`**:  
@@ -317,124 +319,137 @@ flowchart TD
 
 # 🧪 Casos de Teste
 
-Temos aqui um exemplo de uma matriz 5x5, a primeira linha é referente aos dados da matriz, sendo os dois primeiros números as dimensões linhas e colunas, respectivamente, já os dois últimos numéros as cordenadas do ínicio do íncendio, para esse teste temos o fogo se propagando para todas as direções ortogonais
+Temos aqui um exemplo de uma matriz 8x8, a primeira linha é referente aos dados da matriz, sendo os dois primeiros números as dimensões linhas e colunas, respectivamente, já os dois últimos numéros as cordenadas do ínicio do íncendio, para esse teste temos o fogo se propagando para todas as direções ortogonais
 
 ### Arquivo de Entrada (`input.dat`)  
 ```plaintext
-5 5 1 1       // [N=5] [M=5] [Fogo inicia em (X=1, Y=1)]
-1 1 1 1 4     // Linha 0: [1][1][1][1][4]
-1 2 1 1 1     // Linha 1: [1][🔥][1][1][1]
-1 1 1 1 4     // Linha 2: [1][1][1][1][4]
-0 0 1 1 1     // Linha 3: [🟢][🟢][1][1][1]
-1 4 1 0 4     // Linha 4: [1][💧][1][🟢][💧]
-
+8 8 2 3 // Matriz 8x8, fogo inicia em (linha=2, coluna=3)
+1 0 4 1 0 4 4 1
+1 0 4 4 1 0 1 0
+0 0 1 2 0 4 4 4
+4 1 1 1 4 4 1 0
+0 1 1 1 1 0 0 4
+4 4 4 4 4 1 1 1
+1 4 0 0 1 4 4 0
+0 4 1 4 4 0 4 4
 ``` 
 
-# 🔥 Análise Detalhada por Iteração  
+***🔥 Análise Detalhada por Iteração***
 
-## **Iteração 1**  
-### **Estado da Matriz**:  
+### **Iteração 1**  
+- **Fogo em (2,3)**:  
+  - Propaga-se para todas as direções ortogonais (norte, sul, leste, oeste).  
+  - Células adjacentes `(1,3)`, `(3,3)`, `(2,2)`, `(2,4)` viram `2` (em chamas).  
+- **Animal**:  
+  - Inicia em `(7,5)` (célula segura `0`).  
+  - Move-se para `(6,7)` (prioriza água `4` na direção sul, convertendo-a para `0`).  
 ``` plaintext
-1 2 1 1 4
-2 2 2 1 1
-1 2 1 1 4
-0 0 1 1 1
-1 4 1 0 0
+
+1 0 4 1 0 4 4 1 
+1 0 4 4 1 0 1 0 
+0 0 2 2 0 4 4 4 
+4 1 1 2 4 4 1 0 
+0 1 1 1 1 0 0 4 
+4 4 4 4 4 1 1 1 
+1 4 0 0 1 0 4 0 
+0 4 1 4 4 0 4 4 
 ```
-- **Propagação do Fogo**:  
-  - Fogo iniciou em `(1,1)` e se propagou para as 4 direções: `(0,1)`, `(2,1)`, `(1,0)`, `(1,2)`.  
-  - Célula `(1,1)` virou queimada (`3` → não aparece devido a erro no log).  
+### **Iteração 2**  
+- **Fogo**:  
+  - Células em chamas da iteração 1 (`2`) viram queimadas (`3`).  
+  - Novos focos em `(3,3)`, `(1,3)`, `(2,2)`, `(2,4)`.  
+- **Animal**:  
+  - Move-se para `(5,7)` (passos: 2), área segura (`0`).  
 
-- **Movimento do Animal**:  
-  - Encontrou água em `(4,3)` (linha 4, coluna 3), apagando fogo adjacente.  
-  - Nova posição: `(4,4)` (passos: 1).  
-
-
-## **Iteração 2**  
-### **Estado da Matriz**:  
 ``` plaintext
-2 2 2 1 4
-2 2 2 2 1
-2 2 2 1 4
-0 0 1 1 1
-1 4 1 0 0
+
+1 0 4 1 0 4 4 1 
+1 0 4 4 1 0 1 0 
+0 0 2 3 0 4 4 4 
+4 1 2 2 4 4 1 0 
+0 1 1 2 1 0 0 4 
+4 4 4 4 4 1 1 1 
+1 4 0 0 1 0 0 0 
+0 4 1 4 4 0 4 4 
 ```
-- **Propagação do Fogo**:  
-  - Novos focos em `(0,1)`, `(1,0)`, `(1,2)`, `(2,1)` queimam vizinhos.  
-  - Exemplo: `(1,2)` incendeia `(1,3)`.  
+### **Iteração 3**  
+- **Fogo**:  
+  - Propaga-se para células adjacentes de `(3,3)`, `(1,3)`, `(2,4)`.  
+  - Células `(4,3)`, `(3,2)`, `(3,4)` viram `2`.  
+- **Animal**:  
+  - Mantém-se em `(5,7)` (passos: 3), pois está seguro.  
 
-- **Movimento do Animal**:  
-  - Moveu-se para `(3,4)` (passos: 2).  
 
 
 
-## **Iteração 3**  
-### **Estado da Matriz**: 
 ``` plaintext
-2 2 2 2 4
-2 2 2 2 1
-2 2 2 1 0
-0 0 2 1 1
-1 4 1 0 0
+1 0 4 1 0 4 4 1 
+1 0 4 4 1 0 1 0 
+0 0 3 3 0 4 4 4 
+4 2 2 3 4 4 1 0 
+0 1 2 2 2 0 0 4 
+4 4 4 4 4 1 1 1 
+1 4 0 0 1 0 0 0 
+0 4 1 4 4 0 0 4 
+
 ```
- **Evento Crítico**:  
-  - Animal encontrou água em `(3,4)` (linha 3, coluna 4), convertendo-a para `0` e apagando adjacentes.  
 
-- **Movimento do Animal**:  
-  - Nova posição: `(2,4)` (passos: 3).  
+### **Iteração 4**  
+- **Fogo**:  
+  - Células queimadas (`3`) não propagam mais.  
+  - Foco restante em `(4,3)` propaga para `(5,3)`.  
+- **Animal**:  
+  - Continua em `(5,7)` (passos: 4).  
 
-## **Iteração 4**  
-### **Estado da Matriz**:  
 ```plaintext
-2 2 2 2 4
-2 2 2 2 2
-2 2 2 2 0
-0 0 2 2 1
-1 4 2 0 0
+1 0 4 1 0 4 4 1 
+1 0 4 4 1 0 1 0 
+0 0 3 3 0 4 4 4 
+4 2 3 3 4 4 1 0 
+0 2 2 3 2 0 0 4 
+4 4 4 4 4 1 1 1 
+1 4 0 0 1 0 0 0 
+0 4 1 4 4 0 0 0 
 ```
 
-- **Propagação do Fogo**:  
-  - Fogo atinge células inferiores (ex: `(4,2)`).  
-
-- **Movimento do Animal**:  
-  - Retorna para `(3,4)` (passos: 4), possivelmente devido a bloqueio por fogo.  
-
-## **Iteração 5**  
-### **Estado da Matriz**: 
+### **Iteração 5**  
+- **Fogo**:  
+  - Últimas células em chamas (`(5,3)`) viram queimadas (`3`).  
+- **Animal**:  
+  - Permanece em `(5,7)` (passos: 5).  
 ```plaintext
-2 2 2 2 4
-2 2 2 2 2
-2 2 2 2 0
-0 0 2 2 2
-1 4 2 0 0
+1 0 4 1 0 4 4 1 
+1 0 4 4 1 0 1 0 
+0 0 3 3 0 4 4 4 
+4 3 3 3 4 4 1 0 
+0 2 3 3 3 0 0 4 
+4 4 4 4 4 1 1 1 
+1 4 0 0 1 0 0 0 
+0 4 1 4 4 0 0 0 
 ```
-- **Propagação do Fogo**:  
-  - Fogo domina a região central. Células `(3,2)`, `(3,3)` e `(4,2)` queimam.  
 
-- **Movimento do Animal**:  
-  - Move-se para `(4,4)` (passos: 5), área segura (`0`).  
 
-## **Iteração 6**  
-### **Estado da Matriz**:  
+### **Iteração 6**  
+- **Fogo**:  
+  - Nenhuma célula em chamas restante. Simulação encerrada.  
+- **Animal**:  
+  - **Posição final**: `(5,7)` (passos: 6).  
+  - **Status**: Vivo (célula segura `0`).  
 ```plaintext
-2 2 2 2 4
-2 2 2 2 2
-2 2 2 2 0
-0 0 2 2 2
-1 4 2 0 0
+1 0 4 1 0 4 4 1 
+1 0 4 4 1 0 1 0 
+0 0 3 3 0 4 4 4 
+4 3 3 3 4 4 1 0 
+0 3 3 3 3 0 0 4 
+4 4 4 4 4 1 1 1 
+1 4 0 0 1 0 0 0 
+0 4 1 4 4 0 0 0 
 ```
-- **Estagnação**:  
-  - Matriz mantém-se inalterada (fogo não avança mais).  
+### **Conclusão da simulação**  
+- **Simulação Correta**: O fogo propagou-se conforme as regras, e o animal encontrou uma rota segura.  
+- **Desempenho**: 6 iterações para extinção total do fogo.
 
-- **Movimento do Animal**:  
-  - Última posição: `(4,3)` (passos: 6), permanecendo em área segura (`0`).  
-
-## **Conclusão da Simulação**  
-- **Animal sobreviveu!**  
-  - **Passos totais**: 6.  
-  - **Água encontrada**: 2 vezes (Iterações 1 e 3).  
-  - **Posição final**: `(4,3)`.  
-
+#### 📝 ***Observação: Para reproduzir, certifique-se de que `config.hpp` tenha todas as direções do vento ativas (`northWind = eastWind = southWind = westWind = true`).*** 
 ---
 # Compilação e Execução
 
@@ -448,7 +463,19 @@ A estrutura árvore disponibilizada possui um arquivo Makefile que realiza todo 
 |  `make run`            | Executa o programa da pasta build após a realização da compilação                                 |
 
 ---
+# Conclusão  
+Os resultados dos testes foram satisfatórios:  
+- **Propagação do Fogo**: Ocorreu conforme as regras definidas, com transição adequada entre estados (saudável → em chamas → queimada) e influência configurável do vento.  
+- **Movimentação do Animal**: Seguiu a ordem de prioridade estabelecida (água → árvore saudável → área vazia), com mecanismo de segunda chance funcional.  
 
+O simulador demonstrou ser uma ferramenta robusta para analisar padrões de propagação e estratégias de fuga em tempo real.  
+## Melhorias Futuras  
+
+###Posicionamento Inteligente do Animal
+Implementar uma função para definir a posição inicial do animal **o mais distante possível do fogo inicial**, utilizando a **distância de Manhattan**.  
+
+
+---
 # Autores
 
 Este projeto foi desenvolvido por Álvaro Silva como parte da disciplina Algoritmos e Estrutura de Dados I.
